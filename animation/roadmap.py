@@ -33,48 +33,116 @@ def font(size):
 def ease(x):
     x=max(0,min(1,x))
     return x*x*(3-2*x)
-def frame(t, w, h, duration):
-    scale=w/1920
-    im=Image.new("RGB",(w,h),(5,9,23))
+def blend(a,b,p):
+    return tuple(int(a[i]*(1-p)+b[i]*p) for i in range(3))
+def text_center(d, xy, value, size, color, anchor="mm"):
+    d.text(xy,value,font=font(max(10,int(size))),fill=color,anchor=anchor)
+def line_glow(d, pts, color, width=3):
+    d.line(pts,fill=(*color,30),width=width*5,joint="curve")
+    d.line(pts,fill=(*color,170),width=width,joint="curve")
+def frame(t,w,h,duration):
+    # All compositions are authored on a fixed 1920x1080 stage and scaled once.
+    W,H=1920,1080
+    im=Image.new("RGB",(W,H),(5,9,23))
     d=ImageDraw.Draw(im,"RGBA")
-    for j in range(75):
-        x=int((j*541+83)%w); y=int((j*317+119)%h)
-        r=max(1,int((1+0.8*math.sin(t*.5+j))*scale))
-        d.ellipse((x-r,y-r,x+r,y+r),fill=(160,194,255,60))
-    d.text((int(90*scale),int(52*scale)),"ROADMAP / MATHEMATICS",font=font(int(26*scale)),fill=(109,168,230,255))
-    d.text((int(90*scale),int(104*scale)),"Полная карта высшей математики",font=font(int(52*scale)),fill="white")
-    d.text((int(90*scale),int(178*scale)),"15 этапов  ·  4 параллельных направления  ·  от основ до исследований",
-           font=font(int(24*scale)),fill=(171,191,218,255))
-    active=min(14,int(t/duration*15))
-    progress=ease((t/duration*15)-active)
-    start=max(0,active-3)
-    end=min(15,start+6)
-    if end-start<6: start=max(0,end-6)
-    xs=[int((175+i*320)*scale) for i in range(6)]
-    ys=[int((350+j*155)*scale) for j in range(4)]
-    for j,(color,label) in enumerate(zip(COLORS,["АНАЛИЗ","АЛГЕБРА","ГЕОМЕТРИЯ","ДИСКРЕТНОЕ / ПРИКЛАДНОЕ"])):
-        y=ys[j]
-        d.text((int(90*scale),y-int(62*scale)),label,font=font(int(17*scale)),fill=(*color,255))
-        for i in range(end-start):
-            k=start+i
-            x=xs[i]
-            if i:
-                d.line((xs[i-1]+int(110*scale),y,x-int(110*scale),y),
-                       fill=(*color,150 if k<=active else 35),width=max(2,int(3*scale)))
-            alpha=255 if k<active else int(80+175*progress) if k==active else 55
-            r=int((12+(5*math.sin(t*3)**2 if k==active else 0))*scale)
-            d.ellipse((x-r,y-r,x+r,y+r),fill=(*color,alpha))
-            if k==active:
-                d.ellipse((x-2*r,y-2*r,x+2*r,y+2*r),outline=(*color,100),width=max(1,int(2*scale)))
-            name=STAGES[k][1][j]
-            if len(name)>25: name=name[:23]+"…"
-            d.text((x-int(105*scale),y+int(28*scale)),name,font=font(int(17*scale)),
-                   fill=(225,236,255,alpha))
-    d.text((int(90*scale),int(940*scale)),f"ЭТАП {active+1:02d} / 15    {STAGES[active][0]}",
-           font=font(int(30*scale)),fill="white")
-    x0=int(90*scale); x1=w-int(90*scale); y=int(1000*scale)
-    d.rounded_rectangle((x0,y,x1,y+int(7*scale)),radius=4,fill=(35,49,74,255))
-    d.rounded_rectangle((x0,y,x0+int((x1-x0)*min(1,t/duration)),y+int(7*scale)),radius=4,fill=(69,204,255,255))
+    phase=min(0.999,t/duration)
+    for j in range(95):
+        x=(j*541+83+int(11*t*math.sin(j)))%W
+        y=(j*317+119+int(8*t*math.cos(j)))%H
+        r=1+(j%3==0)
+        d.ellipse((x-r,y-r,x+r,y+r),fill=(150,194,255,30+j%4*15))
+    # Soft moving grid, same visual language as the interactive science map.
+    for x in range(-80,2000,80):
+        xx=x+int(18*math.sin(t*.18))
+        d.line((xx,0,xx,H),fill=(70,115,170,13))
+    for y in range(0,1100,80):
+        d.line((0,y,W,y),fill=(70,115,170,13))
+    d.text((92,55),"ROADMAPSCIENCE  /  MATHEMATICS",font=font(25),fill=(110,186,244,255))
+    # Four chapters: introduction, sequential stages, prerequisites, full overview.
+    if phase<.12:
+        p=ease(phase/.12)
+        text_center(d,(960,365-int((1-p)*65)),"МАТЕМАТИКА",94,(245,250,255,255))
+        text_center(d,(960,465),"От логики до исследовательских задач",36,(166,195,225,int(255*p)))
+        for j,c in enumerate(COLORS):
+            a=(j+1)*math.pi/2+t*.65
+            x=960+int(245*math.cos(a));y=695+int(95*math.sin(a))
+            d.ellipse((x-13,y-13,x+13,y+13),fill=(*c,220))
+            if j:
+                line_glow(d,(960,695,x,y),c,2)
+        text_center(d,(960,935),"15 ЭТАПОВ     •     4 ПАРАЛЛЕЛЬНЫХ НАПРАВЛЕНИЯ",23,(155,181,212,255))
+    elif phase<.76:
+        p=(phase-.12)/.64
+        f=min(14,int(p*15))
+        local=ease(p*15-f)
+        # Camera follows the selected stage; neighbors retain spatial context.
+        center=960
+        centers=[center+(i-f)*315-int(local*315) for i in range(15)]
+        tracks=["АНАЛИЗ","АЛГЕБРА","ГЕОМЕТРИЯ","ДИСКРЕТНАЯ / ПРИКЛАДНАЯ"]
+        d.text((92,115),"ПОСЛЕДОВАТЕЛЬНОЕ И ПАРАЛЛЕЛЬНОЕ ИЗУЧЕНИЕ",font=font(28),fill="white")
+        d.text((92,169),f"ЭТАП {f+1:02d} / 15   ·   {STAGES[f][0]}",font=font(31),fill=(193,213,242,255))
+        for j,(c,label) in enumerate(zip(COLORS,tracks)):
+            y=315+j*168
+            d.text((92,y-65),label,font=font(20),fill=(*c,255))
+            for i,x in enumerate(centers):
+                if x<30 or x>2050: continue
+                if i>0:
+                    xp=centers[i-1]
+                    if xp<2050:
+                        line_glow(d,(xp+18,y,x-18,y),c,3)
+                radius=18 if i==f else 11
+                a=230 if i<=f else 80
+                if i==f:
+                    ring=31+int(5*math.sin(t*4)**2)
+                    d.ellipse((x-ring,y-ring,x+ring,y+ring),outline=(*c,105),width=3)
+                d.ellipse((x-radius,y-radius,x+radius,y+radius),fill=(*c,a))
+                if abs(x-960)<530:
+                    name=STAGES[i][1][j]
+                    # Wrap rather than truncate labels.
+                    words=name.split(); lines=[]; cur=""
+                    for word in words:
+                        if len(cur+" "+word)>23 and cur:lines.append(cur);cur=word
+                        else:cur=(cur+" "+word).strip()
+                    if cur:lines.append(cur)
+                    for n,ln in enumerate(lines[:3]):
+                        text_center(d,(x,y+40+n*26),ln,18,(220,231,249,255 if i<=f else 110))
+        d.text((92,986),"НАПРАВЛЕНИЯ ИДУТ ПАРАЛЛЕЛЬНО; СВЯЗИ ПОКАЗЫВАЮТ ПРЕЕМСТВЕННОСТЬ",
+               font=font(19),fill=(157,181,210,255))
+    elif phase<.90:
+        p=ease((phase-.76)/.14)
+        text_center(d,(960,185),"ЗАВИСИМОСТИ МЕЖДУ РАЗДЕЛАМИ",48,"white")
+        chains=[
+            ["Функции","Пределы","Производные","Интегралы","Теория меры"],
+            ["Множества","Матрицы","Пространства","Операторы","Абстрактная алгебра"],
+            ["Геометрия","Векторы","Топология","Многообразия","Дифф. геометрия"]]
+        for j,chain in enumerate(chains):
+            y=355+j*218;c=COLORS[j]
+            for k,name in enumerate(chain):
+                x=215+k*375
+                if k:
+                    line_glow(d,(x-300,y,x-95,y),c,3)
+                    head=x-94
+                    d.polygon([(head,y),(head-12,y-7),(head-12,y+7)],fill=(*c,190))
+                d.rounded_rectangle((x-90,y-37,x+90,y+37),radius=18,
+                                    fill=(*blend((9,19,37),c,.17),255),outline=(*c,180),width=2)
+                text_center(d,(x,y),name,16,"white")
+        text_center(d,(960,1010),"НЕ ВСЁ НУЖНО ИЗУЧАТЬ СТРОГО ПО ОДНОЙ ЛИНИИ",24,(169,200,235,255))
+    else:
+        text_center(d,(960,145),"ЕДИНАЯ КАРТА МАТЕМАТИКИ",52,"white")
+        for i,(name,topics) in enumerate(STAGES):
+            x=150+(i%5)*405;y=285+(i//5)*230
+            d.rounded_rectangle((x-125,y-60,x+230,y+126),radius=17,
+                                fill=(13,25,47,245),outline=(65,96,140,160),width=2)
+            d.text((x-105,y-43),f"{i+1:02d}  {name}",font=font(18),fill=(239,245,255,255))
+            for j,topic in enumerate(topics):
+                label=topic if len(topic)<32 else topic[:30]+"…"
+                d.ellipse((x-104,y-5+j*27,x-96,y+3+j*27),fill=(*COLORS[j],255))
+                d.text((x-84,y-12+j*27),label,font=font(14),fill=(183,206,234,255))
+        text_center(d,(960,1018),"ROADMAPSCIENCE  ·  ИЗУЧАЙ СВЯЗИ, А НЕ ТОЛЬКО ТЕМЫ",22,(131,191,244,255))
+    # Global progress indicator.
+    d.rounded_rectangle((90,1040,1830,1046),radius=3,fill=(36,54,80,255))
+    d.rounded_rectangle((90,1040,90+max(1,int(1740*phase)),1046),radius=3,fill=(75,205,250,255))
+    if (w,h)!=(W,H):
+        im=im.resize((w,h),Image.Resampling.LANCZOS)
     return np.asarray(im)
 def main():
     p=argparse.ArgumentParser()
