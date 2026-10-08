@@ -15,4 +15,302 @@ export const stages:Stage[]=[
 {title:"Исследовательский фундамент",tracks:["Геометрический анализ","Гомологическая алгебра и категории","Группы и алгебры Ли","Теория моделей и вычислимость"]},
 {title:"Современные направления",tracks:["Нелинейные PDE","Высшая алгебраическая геометрия","Симплектическая геометрия","Эргодическая теория"]},
 {title:"Научная работа",tracks:["Исследования в анализе","Исследования в алгебре","Исследования в геометрии","Исследования в логике"]}];
-export const sciences=[{id:"math",name:"Математика",en:"MATHEMATICS",symbol:"∑",description:"От логики и множеств до современной исследовательской математики.",count:"15 этапов",ready:true},{id:"physics",name:"Физика",en:"PHYSICS",symbol:"Φ",description:"Механика, поля, квантовые системы и устройство Вселенной.",count:"Скоро",ready:false},{id:"cs",name:"Информатика",en:"COMPUTER SCIENCE",symbol:"⌘",description:"Алгоритмы, вычисления, архитектуры и теория сложности.",count:"Скоро",ready:false},{id:"philosophy",name:"Философия",en:"PHILOSOPHY",symbol:"◈",description:"Онтология, эпистемология, логика и философские системы.",count:"Скоро",ready:false},{id:"chemistry",name:"Химия",en:"CHEMISTRY",symbol:"⚗",description:"Строение вещества, реакции и молекулярные системы.",count:"Скоро",ready:false},{id:"biology",name:"Биология",en:"BIOLOGY",symbol:"◎",description:"Клетка, генетика, эволюция и сложные живые системы.",count:"Скоро",ready:false}];
+export const sciences=[
+  {
+    "id": "math",
+    "name": "Математика",
+    "en": "MATHEMATICS",
+    "symbol": "∑",
+    "description": "Структура математических разделов от логики до современных теорий",
+    "count": "Карта разделов",
+    "ready": true
+  },
+  {
+    "id": "physics",
+    "name": "Физика",
+    "en": "PHYSICS",
+    "symbol": "Φ",
+    "description": "Механика, термодинамика, поля, квантовая теория, космология",
+    "count": "Карта разделов",
+    "ready": true
+  },
+  {
+    "id": "cs",
+    "name": "Информатика",
+    "en": "COMPUTER SCIENCE",
+    "symbol": "⌘",
+    "description": "Алгоритмы, вычислительные системы, теория сложности, ИИ",
+    "count": "Карта разделов",
+    "ready": true
+  },
+  {
+    "id": "epistemology",
+    "name": "Эпистемология",
+    "en": "EPISTEMOLOGY",
+    "symbol": "◇",
+    "description": "Знание, обоснование, истина, скептицизм, научный метод",
+    "count": "Карта разделов",
+    "ready": true
+  },
+  {
+    "id": "biology",
+    "name": "Биология",
+    "en": "BIOLOGY",
+    "symbol": "◎",
+    "description": "Клетки, генетика, эволюция, экосистемы",
+    "count": "Карта разделов",
+    "ready": true
+  },
+  {
+    "id": "chemistry",
+    "name": "Химия",
+    "en": "CHEMISTRY",
+    "symbol": "⚗",
+    "description": "Атомы, связи, реакции, молекулы и материалы",
+    "count": "Карта разделов",
+    "ready": true
+  },
+  {
+    "id": "philosophy",
+    "name": "Философия",
+    "en": "PHILOSOPHY",
+    "symbol": "◈",
+    "description": "Метафизика, этика, сознание, логика и язык",
+    "count": "Карта разделов",
+    "ready": true
+  },
+  {
+    "id": "astronomy",
+    "name": "Астрономия",
+    "en": "ASTRONOMY",
+    "symbol": "✦",
+    "description": "Небесная механика, звёзды, галактики, космос",
+    "count": "Карта разделов",
+    "ready": true
+  },
+  {
+    "id": "neuroscience",
+    "name": "Нейронаука",
+    "en": "NEUROSCIENCE",
+    "symbol": "✺",
+    "description": "Нейроны, мозговые сети, восприятие, познание",
+    "count": "Карта разделов",
+    "ready": true
+  },
+  {
+    "id": "psychology",
+    "name": "Психология",
+    "en": "PSYCHOLOGY",
+    "symbol": "Ψ",
+    "description": "Когнитивные процессы, поведение, личность",
+    "count": "Карта разделов",
+    "ready": true
+  },
+  {
+    "id": "geology",
+    "name": "Геология",
+    "en": "GEOLOGY",
+    "symbol": "◭",
+    "description": "Минералы, тектоника, история Земли",
+    "count": "Карта разделов",
+    "ready": true
+  },
+  {
+    "id": "geography",
+    "name": "География",
+    "en": "GEOGRAPHY",
+    "symbol": "◉",
+    "description": "Геосистемы, ландшафты, пространственные процессы",
+    "count": "Карта разделов",
+    "ready": true
+  },
+  {
+    "id": "ecology",
+    "name": "Экология",
+    "en": "ECOLOGY",
+    "symbol": "❋",
+    "description": "Популяции, экосистемы, биосфера",
+    "count": "Карта разделов",
+    "ready": true
+  },
+  {
+    "id": "statistics",
+    "name": "Статистика",
+    "en": "STATISTICS",
+    "symbol": "σ",
+    "description": "Вероятностные модели, вывод, оценивание",
+    "count": "Карта разделов",
+    "ready": true
+  },
+  {
+    "id": "linguistics",
+    "name": "Лингвистика",
+    "en": "LINGUISTICS",
+    "symbol": "λ",
+    "description": "Фонетика, синтаксис, семантика, языковые системы",
+    "count": "Карта разделов",
+    "ready": true
+  },
+  {
+    "id": "economics",
+    "name": "Экономика",
+    "en": "ECONOMICS",
+    "symbol": "₿",
+    "description": "Рынки, стимулы, макроэкономика, теория игр",
+    "count": "Карта разделов",
+    "ready": true
+  },
+  {
+    "id": "sociology",
+    "name": "Социология",
+    "en": "SOCIOLOGY",
+    "symbol": "⊙",
+    "description": "Социальные структуры, институты, сети",
+    "count": "Карта разделов",
+    "ready": true
+  },
+  {
+    "id": "anthropology",
+    "name": "Антропология",
+    "en": "ANTHROPOLOGY",
+    "symbol": "♧",
+    "description": "Человек, культура, эволюция общества",
+    "count": "Карта разделов",
+    "ready": true
+  },
+  {
+    "id": "history",
+    "name": "История",
+    "en": "HISTORY",
+    "symbol": "⌛",
+    "description": "Источники, цивилизации, исторические процессы",
+    "count": "Карта разделов",
+    "ready": true
+  },
+  {
+    "id": "political-science",
+    "name": "Политология",
+    "en": "POLITICAL SCIENCE",
+    "symbol": "⚑",
+    "description": "Государства, институты, политические системы",
+    "count": "Карта разделов",
+    "ready": true
+  },
+  {
+    "id": "medicine",
+    "name": "Медицина",
+    "en": "MEDICINE",
+    "symbol": "✚",
+    "description": "Анатомия, физиология, патология, диагностика",
+    "count": "Карта разделов",
+    "ready": true
+  },
+  {
+    "id": "engineering",
+    "name": "Инженерия",
+    "en": "ENGINEERING",
+    "symbol": "⚙",
+    "description": "Механизмы, системы, проектирование, технологии",
+    "count": "Карта разделов",
+    "ready": true
+  },
+  {
+    "id": "materials",
+    "name": "Материаловедение",
+    "en": "MATERIALS SCIENCE",
+    "symbol": "⬡",
+    "description": "Кристаллы, полимеры, свойства материалов",
+    "count": "Карта разделов",
+    "ready": true
+  },
+  {
+    "id": "earth-science",
+    "name": "Науки о Земле",
+    "en": "EARTH SCIENCE",
+    "symbol": "◍",
+    "description": "Атмосфера, океаны, климат, геофизика",
+    "count": "Карта разделов",
+    "ready": true
+  },
+  {
+    "id": "logic",
+    "name": "Логика",
+    "en": "LOGIC",
+    "symbol": "⊢",
+    "description": "Доказательства, формальные системы, модели",
+    "count": "Карта разделов",
+    "ready": true
+  },
+  {
+    "id": "information",
+    "name": "Теория информации",
+    "en": "INFORMATION THEORY",
+    "symbol": "≋",
+    "description": "Энтропия, кодирование, каналы связи",
+    "count": "Карта разделов",
+    "ready": true
+  },
+  {
+    "id": "cybernetics",
+    "name": "Кибернетика",
+    "en": "CYBERNETICS",
+    "symbol": "⌁",
+    "description": "Управление, обратная связь, сложные системы",
+    "count": "Карта разделов",
+    "ready": true
+  },
+  {
+    "id": "robotics",
+    "name": "Робототехника",
+    "en": "ROBOTICS",
+    "symbol": "▣",
+    "description": "Кинематика, управление, восприятие",
+    "count": "Карта разделов",
+    "ready": true
+  },
+  {
+    "id": "data-science",
+    "name": "Наука о данных",
+    "en": "DATA SCIENCE",
+    "symbol": "▤",
+    "description": "Данные, моделирование, машинное обучение",
+    "count": "Карта разделов",
+    "ready": true
+  },
+  {
+    "id": "genetics",
+    "name": "Генетика",
+    "en": "GENETICS",
+    "symbol": "⧖",
+    "description": "Наследственность, геномы, регуляция",
+    "count": "Карта разделов",
+    "ready": true
+  },
+  {
+    "id": "microbiology",
+    "name": "Микробиология",
+    "en": "MICROBIOLOGY",
+    "symbol": "◌",
+    "description": "Микроорганизмы, микробные сообщества",
+    "count": "Карта разделов",
+    "ready": true
+  },
+  {
+    "id": "biochemistry",
+    "name": "Биохимия",
+    "en": "BIOCHEMISTRY",
+    "symbol": "✣",
+    "description": "Белки, ферменты, метаболизм",
+    "count": "Карта разделов",
+    "ready": true
+  },
+  {
+    "id": "astrophysics",
+    "name": "Астрофизика",
+    "en": "ASTROPHYSICS",
+    "symbol": "☄",
+    "description": "Звёздная эволюция, гравитация, космология",
+    "count": "Карта разделов",
+    "ready": true
+  }
+];
