@@ -40,6 +40,66 @@ def text_center(d, xy, value, size, color, anchor="mm"):
 def line_glow(d, pts, color, width=3):
     d.line(pts,fill=(*color,30),width=width*5,joint="curve")
     d.line(pts,fill=(*color,170),width=width,joint="curve")
+def math_scene(d,t,kind):
+    # Mathematical objects are animated by their defining equations.
+    cx,cy=1370,585
+    if kind==0:
+        # Limit: a moving point approaches a curve point.
+        for k in range(-7,8):
+            x=cx+k*65
+            d.line((x,300,x,850),fill=(55,81,113,80),width=1)
+        for k in range(-5,6):
+            y=cy+k*50
+            d.line((970,y,1790,y),fill=(55,81,113,80),width=1)
+        pts=[]
+        for i in range(230):
+            x=-2.7+i*5.4/229
+            pts.append((cx+int(x*140),cy-int((x*x-1)*65)))
+        line_glow(d,pts,COLORS[0],4)
+        x=1.9*math.exp(-.6*t)
+        px=cx+int(x*140);py=cy-int((x*x-1)*65)
+        d.ellipse((px-12,py-12,px+12,py+12),fill=(*COLORS[0],255))
+        d.text((1000,800),"lim  f(x) = f(a)",font=font(39),fill="white")
+    elif kind==1:
+        # Vector addition in a 3D-like oblique coordinate system.
+        O=(cx-60,cy+110)
+        d.line((O[0]-320,O[1],O[0]+360,O[1]),fill=(75,105,145,180),width=2)
+        d.line((O[0],O[1]+210,O[0],O[1]-360),fill=(75,105,145,180),width=2)
+        q=.65+.35*math.sin(t*.6)
+        a=(O[0]+int(210*q),O[1]-170)
+        b=(a[0]+130,a[1]+100)
+        for st,en,col in [(O,a,COLORS[0]),(a,b,COLORS[1]),(O,b,COLORS[2])]:
+            line_glow(d,(*st,*en),col,6)
+            angle=math.atan2(en[1]-st[1],en[0]-st[0])
+            p1=(en[0]-23*math.cos(angle-.4),en[1]-23*math.sin(angle-.4))
+            p2=(en[0]-23*math.cos(angle+.4),en[1]-23*math.sin(angle+.4))
+            d.polygon([en,p1,p2],fill=(*col,240))
+        d.text((1060,835),"a + b = c",font=font(45),fill="white")
+    elif kind==2:
+        # Rotating wireframe surface z=sin(x)cos(y).
+        angle=t*.37
+        for fixed in range(-5,6):
+            pts=[]
+            for n in range(75):
+                u=-2.5+5*n/74;v=fixed*.5
+                z=math.sin(u)*math.cos(v)
+                xx=cx+(u*math.cos(angle)-v*math.sin(angle))*100
+                yy=cy+(u*math.sin(angle)+v*math.cos(angle))*35-z*95
+                pts.append((int(xx),int(yy)))
+            d.line(pts,fill=(*COLORS[2],165),width=2)
+        d.text((1050,850),"z = sin(x) cos(y)",font=font(37),fill="white")
+    else:
+        # Animated node network.
+        nodes=[]
+        for i in range(23):
+            a=i*2.39996+t*.08
+            r=65+30*i
+            nodes.append((cx+int(math.cos(a)*r*.75),cy+int(math.sin(a)*r*.55)))
+        for i,(x,y) in enumerate(nodes):
+            for j in range(i):
+                if (i*7+j*3)%11<2:
+                    line_glow(d,(x,y,*nodes[j]),COLORS[i%4],2)
+            d.ellipse((x-6,y-6,x+6,y+6),fill=(*COLORS[i%4],255))
 def frame(t,w,h,duration):
     # All compositions are authored on a fixed 1920x1080 stage and scaled once.
     W,H=1920,1080
@@ -63,6 +123,7 @@ def frame(t,w,h,duration):
         p=ease(phase/.12)
         text_center(d,(960,365-int((1-p)*65)),"МАТЕМАТИКА",94,(245,250,255,255))
         text_center(d,(960,465),"От логики до исследовательских задач",36,(166,195,225,int(255*p)))
+        math_scene(d,t,int(t/2)%4)
         for j,c in enumerate(COLORS):
             a=(j+1)*math.pi/2+t*.65
             x=960+int(245*math.cos(a));y=695+int(95*math.sin(a))
@@ -80,6 +141,9 @@ def frame(t,w,h,duration):
         tracks=["АНАЛИЗ","АЛГЕБРА","ГЕОМЕТРИЯ","ДИСКРЕТНАЯ / ПРИКЛАДНАЯ"]
         d.text((92,115),"ПОСЛЕДОВАТЕЛЬНОЕ И ПАРАЛЛЕЛЬНОЕ ИЗУЧЕНИЕ",font=font(28),fill="white")
         d.text((92,169),f"ЭТАП {f+1:02d} / 15   ·   {STAGES[f][0]}",font=font(31),fill=(193,213,242,255))
+        # A live mathematical vignette accompanies the roadmap.
+        if f in (2,3,4,8,9,11):
+            math_scene(d,t,[1,0,2,2,3,3][(2,3,4,8,9,11).index(f)])
         for j,(c,label) in enumerate(zip(COLORS,tracks)):
             y=315+j*168
             d.text((92,y-65),label,font=font(20),fill=(*c,255))
